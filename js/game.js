@@ -49,6 +49,8 @@ function create() {
     paddle = game.add.sprite(game.world.width*0.5, game.world.height-5, 'paddle');
     game.physics.enable(paddle, Phaser.Physics.ARCADE);
     paddle.anchor.set(0.5, 1);
+    paddle.body.collideWorldBounds = true;
+    paddle.body.bounce.set(1);
     paddle.body.immovable = true;
     
     initBricks();
@@ -66,8 +68,15 @@ function update() {
     game.physics.arcade.collide(ball, paddle, ballHitPaddle);
     game.physics.arcade.collide(ball, bricks, ballHitBrick);
     if(playing) {
-        paddle.x = game.input.x || game.world.width*0.5;
+        paddle.x = game.input.x;
+        if(paddle.x > game.width - paddle.width / 2) {
+            paddle.x = game.width - paddle.width / 2;
+        } 
+        else if(paddle.x < paddle.width / 2) {
+            paddle.x = paddle.width / 2;
+        }
     } else {
+        paddle.x = game.world.width*0.5;
         ball.x = paddle.x;
     }
 }
