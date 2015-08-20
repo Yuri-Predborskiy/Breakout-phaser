@@ -37,6 +37,7 @@ function create() {
     ball = game.add.sprite(game.world.width*0.5, game.world.height-25, 'ball');
     ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
     game.physics.enable(ball, Phaser.Physics.ARCADE);
+    ball.anchor.set(0.5,0.5);
     ball.body.collideWorldBounds = true;
     game.physics.arcade.checkCollision.down = false;
     ball.body.bounce.set(1);
@@ -115,12 +116,15 @@ function ballHitBrick(ball, brick) {
 
 function ballLeaveScreen() {
     lives--;
+    playing: false;
+    paddle.x = game.world.width*0.5;
     if(lives) {
         livesText.setText('Lives: '+lives);
         lifeLostText.visible = true;
         ball.reset(game.world.width*0.5, game.world.height-25);
         paddle.reset(game.world.width*0.5, game.world.height-5);
-        game.input.onDown.addOnce(function(){
+        game.input.onDown.addOnce(function() {
+            playing: true;
             lifeLostText.visible = false;
             ball.body.velocity.set(ballVelocity, -ballVelocity);
         }, this);
@@ -138,6 +142,6 @@ function ballHitPaddle(ball, paddle) {
 
 function startGame() {
     startButton.destroy();
-    ball.body.velocity.set(150, -150);
+    ball.body.velocity.set(ballVelocity, -ballVelocity);
     playing = true;
 }
