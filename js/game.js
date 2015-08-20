@@ -3,10 +3,13 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, null, {
 });
 
 var ball;
-var ballVelocity = 300;
+var ballVelocityX = -75;
+var ballVelocityY = -300;
 var paddle;
 var bricks;
 var newBrick;
+var brickRows = 3;
+var brickCols = 12;
 var brickInfo;
 var scoreText;
 var score = 0;
@@ -82,24 +85,29 @@ function update() {
 }
 
 function initBricks() {
+    brickWidth = 50;
+    brickHeight = 20;
+    brickPadding = 5;
+    brickLeftOffset = (game.width - brickCols * brickWidth - (brickCols - 1) * brickPadding) / 2 + brickWidth / 2;
     brickInfo = {
-        width: 50,
-        height: 20,
+        width: brickWidth,
+        height: brickHeight,
         count: {
-            row: 10,
-            col: 14
+            row: brickRows,
+            col: brickCols
         },
         offset: {
-            top: 50,
-            left: 40
+            top: 80,
+            left: brickLeftOffset,
+            row: 30
         },
-        padding: 5
+        padding: brickPadding
     }
     bricks = game.add.group();
     for(c=0; c < brickInfo.count.col; c++) {
         for(r=0; r < brickInfo.count.row; r++) {
             var brickX = (c * (brickInfo.width + brickInfo.padding)) + brickInfo.offset.left;
-            var brickY = (r * (brickInfo.height + brickInfo.padding)) + brickInfo.offset.top;
+            var brickY = (r * (brickInfo.height + brickInfo.padding)) + brickInfo.offset.top + brickInfo.offset.row * r;
             newBrick = game.add.sprite(brickX, brickY, 'brick');
             game.physics.enable(newBrick, Phaser.Physics.ARCADE);
             newBrick.body.immovable = true;
@@ -110,15 +118,10 @@ function initBricks() {
 }
 
 function ballHitBrick(ball, brick) {
-    var killTween = game.add.tween(brick.scale);
-    killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
-    killTween.onComplete.addOnce(function(){
-        brick.kill();
-    }, this);
-    killTween.start();
-
+    brick.kill();
     score += 10;
     scoreText.setText('Points: '+score);
+
     if(score === brickInfo.count.row*brickInfo.count.col*10) {
         alert('You won the game, congratulations!');
         location.reload();
@@ -137,7 +140,7 @@ function ballLeaveScreen() {
         game.input.onDown.addOnce(function() {
             lifeLostText.visible = false;
             playing = true;
-            ball.body.velocity.set(ballVelocity, -ballVelocity);
+            ball.body.velocity.set(ballVelocityX, ballVelocityY);
         }, this);
     }
     else {
@@ -153,6 +156,6 @@ function ballHitPaddle(ball, paddle) {
 
 function startGame() {
     startButton.destroy();
-    ball.body.velocity.set(ballVelocity, -ballVelocity);
+    ball.body.velocity.set(ballVelocityX, ballVelocityY);
     playing = true;
 }
