@@ -55,7 +55,7 @@ function create() {
     scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
     livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives, textStyle);
     livesText.anchor.set(1,0);
-    lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5, 'Life lost, click to continue', textStyle);
+    lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.75, 'Life lost, click to continue', textStyle);
     lifeLostText.anchor.set(0.5);
     lifeLostText.visible = false;
     startButton = game.add.button(game.world.width*0.5, game.world.height*0.5, 'button', startGame, this, 1, 0, 2);
@@ -67,6 +67,8 @@ function update() {
     game.physics.arcade.collide(ball, bricks, ballHitBrick);
     if(playing) {
         paddle.x = game.input.x || game.world.width*0.5;
+    } else {
+        ball.x = paddle.x;
     }
 }
 
@@ -116,16 +118,16 @@ function ballHitBrick(ball, brick) {
 
 function ballLeaveScreen() {
     lives--;
-    playing: false;
-    paddle.x = game.world.width*0.5;
+    playing = false;
     if(lives) {
         livesText.setText('Lives: '+lives);
         lifeLostText.visible = true;
         ball.reset(game.world.width*0.5, game.world.height-25);
+        ball.x = paddle.x;
         paddle.reset(game.world.width*0.5, game.world.height-5);
         game.input.onDown.addOnce(function() {
-            playing: true;
             lifeLostText.visible = false;
+            playing = true;
             ball.body.velocity.set(ballVelocity, -ballVelocity);
         }, this);
     }
