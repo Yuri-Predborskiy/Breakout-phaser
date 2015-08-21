@@ -8,7 +8,7 @@ var ballVelocityY = -300;
 var paddle;
 var bricks;
 var newBrick;
-var brickRows = 3;
+var brickRows = 4;
 var brickCols = 12;
 var brickInfo;
 var scoreText;
